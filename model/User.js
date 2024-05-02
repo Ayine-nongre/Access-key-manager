@@ -5,5 +5,6 @@ export const User = mongoose.model('User', {
     password: { type: String, required: true },
     role: { type: String, required: true, enum: ['admin', 'personnel'], default: 'personnel' },
     status: { type: String, required: true, default: 'inactive' },
-    activation_token: { type: String, required: true }
+    activation_token: { type: String, required: true },
+    reset_OTP: { type: String }
 })
