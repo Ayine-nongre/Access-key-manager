@@ -58,6 +58,7 @@ export const signup = async (req, res, next) => {
         activation_token: token
     })
 
+    // save new user in database
     await newUser.save()
     .then((user) => createToken(user, res, 201))
     .catch((err) => console.log(err))

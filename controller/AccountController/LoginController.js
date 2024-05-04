@@ -32,6 +32,7 @@ export const login = async (req, res) => {
         })
     }
 
+    // check to see if user account has been activated
     if (user.status !== 'active') {
         return res.status(500).json({
             status: 'Failed',

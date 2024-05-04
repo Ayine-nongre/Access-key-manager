@@ -6,6 +6,7 @@ import { resetPassword, sendOTP, verifyOTP } from '../controller/AccountControll
 
 export const AccountRouter = express.Router()
 
+// define routes for account activities
 AccountRouter.post('/signup', signup)
 AccountRouter.post('/login', login)
 AccountRouter.get('/activate-account', verifyAccount)
