@@ -19,8 +19,7 @@ export const generateKey = async (req, res) => {
     const newKey = await Key.create({
         accessKey: accessKey,
         created_At: new Date(),
-        expiry: new Date(),
-        status: 'expired'
+        expiry: new Date()
     }).catch((err => catchErr(res, 500)))
 
     // save access key
