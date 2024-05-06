@@ -37,3 +37,6 @@ This repo contains an access key manager for a multitenant school management sof
     ```
     nodemon app.js
     ```
+
+## ER Diagram
+![ER diagram](https://github.com/Ayine-nongre/Access-key-manager/blob/main/ER%20Diagram.drawio.png)
