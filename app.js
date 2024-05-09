@@ -1,3 +1,4 @@
+import dotenv from 'dotenv'
 import express from 'express';
 import mongoose, { version } from 'mongoose';
 import cookieParser from 'cookie-parser';
@@ -8,9 +9,10 @@ import swaggerui from 'swagger-ui-express'
 import YAML from 'yamljs';
 
 const app = express()
+dotenv.config()
 
 // set up database connection
-mongoose.connect("mongodb://127.0.0.1:27017/multiTenant");
+mongoose.connect(process.env.DATABASE_URL);
 
 
 var set = mongoose.connection;
