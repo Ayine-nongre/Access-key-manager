@@ -7,8 +7,8 @@ definition:
   servers:
     - url: http://localhost:3000/api
       description: Testing server on localhost
-    - url: http://staging-api.example.com
-      description: Optional server description, e.g. Internal staging server for testing
+    - url: https://micro-accessmangager.onrender.com/api
+      description: Live server hosted on render
   paths:
     /signup:
       post:
