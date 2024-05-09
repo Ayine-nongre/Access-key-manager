@@ -29,14 +29,21 @@ export const createToken = async (user, res, statusCode) => {
 // verify user using token
 export const verifyToken = (req, res, next) => {
     //Retrieves token from request header
-    const token = req.headers['authorization'].split(' ')[1]
+    try {
+        const token = req.headers['authorization'].split(' ')[1]
 
-    //token is decrypted with private key to verify user
-    const decoded = jwt.verify(token, process.env.PRIVATEKEY, (err, acc) => {
-        if (err) return catchErr(res, 'User is not logged in', 401)
+        //token is decrypted with private key to verify user
+        const decoded = jwt.verify(token, process.env.PRIVATEKEY, (err, acc) => {
+            if (err) return catchErr(res, 'User is not logged in', 401)
 
-        //user is sent back through req if verified
-        req.user = acc;
-        next()
-    })
+            //user is sent back through req if verified
+            req.user = acc;
+            next()
+        })
+    } catch (err) {
+        catchErr(res, 'No token received', 401)
+    }
+    
+
+    
 }

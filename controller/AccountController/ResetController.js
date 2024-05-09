@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import { transporter } from '../../config/MailService.js'
 import { User } from '../../model/User.js'
+import { catchErr } from '../../middleware/ErrorHandler.js'
 
 
 // function to generate OTP
@@ -18,11 +19,11 @@ export function generateOTP (){
 export const sendOTP = async (req, res, next) => {
     const { email } = req.body
 
-    if (!email) return res.json({ status: "Failed", message: "No data received"})
+    if (!email) return catchErr(res, 'No data received', 500)
     
 
-    const user = await User.findOne({ email: email })
-    if (!user) return res.status(500).json({ status: "Failed", message: "This email is not registered to Micro-Focus inc"})
+    const user = await User.findOne({ email: email }).catch(err => catchErr(res, 500))
+    if (!user) return catchErr(res, 'This email is not registered to Micro-Focus inc', 404)
 
     const OTP = generateOTP()
 
@@ -32,34 +33,28 @@ export const sendOTP = async (req, res, next) => {
         to: ' <' + email + '>',
         subject: "Reset Password",
         html: "<div><p>Hi,</p><p>Your OTP is: " + OTP +"</p></div>"
-    }).catch(err => console.log(err))
+    }).catch(err => catchErr(res, 500))
 
     // encrypt OTP and store it in database
-    const hashedOTP = await bcrypt.hash(OTP, 10)
-    if (!hashedOTP) return res.status(500).json({ message: "Internal server error"})
+    const hashedOTP = await bcrypt.hash(OTP, 10).catch(err => catchErr(res, 500))
+    if (!hashedOTP) return catchErr(res, 500)
 
-    user.updateOne({ reset_OTP: hashedOTP }).catch((err) => {
-        console.log(err)
-        return next(res.status(500).json({
-            status: "Failed",
-            message: "Failed to store OTP in db"
-        }))
-    })
+    user.updateOne({ reset_OTP: hashedOTP }).catch(err => catchErr(res, 500))
 
     res.status(200).json({
-        email: email,
+        status: "success",
         message: "OTP delivered",
-        status: "success"
+        email: email
     })
 }
 
 export const verifyOTP = async (req, res, next) => {
     const { OTP, email } = req.body
-    if (!OTP || !email) return res.json({ status: "Failed", message: "No data received"})
+    if (!OTP || !email) return catchErr(res, 'No data received', 500)
 
     // check if user with email exists
-    const user = await User.findOne({ email: email })
-    if (!user) return res.status(404).json({ message: "This email is not registered to foodDash" })
+    const user = await User.findOne({ email: email }).catch(err => catchErr(res, 500))
+    if (!user) return catchErr(res, 'This email is not registered to Micro-Focus inc', 404)
 
     // var date = new Date(userOTP.createdAt);
     // var expiry = date.getTime() + 300000 //5 minutes in milliseconds is 300000
@@ -71,57 +66,41 @@ export const verifyOTP = async (req, res, next) => {
 
     // Verify if OTP is valid
     const isAuthorised = await bcrypt.compare(OTP, user.reset_OTP)
-    if (!isAuthorised) return res.status(401).json({ status: "Failed", message: "Incorrect OTP" })
+    if (!isAuthorised) return catchErr(res, 'Incorrect OTP', 401)
 
     // remove otp after verifying it
-    await user.updateOne({ reset_OTP: 'null' }).catch((err) => {
-        console.log(err)
-        return next(res.status(500).json({
-            status: "Failed",
-            message: "Failed to remove used OTP"
-        }))
-    })
+    await user.updateOne({ reset_OTP: 'null' }).catch((err) => next(res, "Failed to remove used OTP", 500))
 
     return res.status(200).json({
-        message: "OTP succesful verified",
-        status: "Success"
+        status: "Success",
+        message: "OTP succesful verified"
     })
 }
 
 export const resetPassword = async (req, res, next) => {
     const { password, confirmPassword, email } = req.body
-    if (!password || !confirmPassword) return res.json({ status: "Failed", message: "No data received from frontend" })
+    if (!password || !confirmPassword) return catchErr(res, 'No data received from frontend', 404)
 
     // check if passwords match
-    if (password != confirmPassword) return res.json({ status: "Failed", message: "Passwords do not match" })
-
+    if (password != confirmPassword) return catchErr(res, 500)
     // check if user with email exists
-    const user = await User.findOne({ email: email })
-    if (!user) return res.status(404).json({ status: "Failed", message: "Internal server error" })
+    const user = await User.findOne({ email: email }).catch(err => catchErr(res, 500))
+    if (!user) return catchErr(res, 'User with this email not found', 404)
 
     // check if the new password is same as old/already in use one
-    const usedPassword = await bcrypt.compare(password, user.password).catch((err) => {
-        console.log(err)
-        return next(res.status(500).json({
-            status: "Failed",
-            message: "Internal server error"
-        }))
-    })
+    const usedPassword = await bcrypt.compare(password, user.password).catch(err => catchErr(res, 500))
 
-    if (usedPassword) return res.status(400).json({
-        status: "Failed",
-        message: "Password is already being used by this account"
-    })
+    if (usedPassword) return catchErr(res, 'Password is already being used by this account', 400)
 
     // encrypt new password and update user details in db with new password
-    const hashedPassword = await bcrypt.hash(password, 10)
-    if (!hashedPassword) return res.status(500).json({ status: "Failed", message: "Internal server error"})
+    const hashedPassword = await bcrypt.hash(password, 10).catch(err => catchErr(res, 500))
+    if (!hashedPassword) return catchErr(res, 500)
 
-    await user.updateOne({ password: hashedPassword }).catch(err => console.log(err))
-    await user.save().catch(err => console.log(err))
+    await user.updateOne({ password: hashedPassword }).catch(err => catchErr(res, 500))
+    await user.save().catch(err => catchErr(res, 500))
 
     res.status(200).json({
-        message: "Password resetted succesful",
-        status: "Success"
+        status: "Success",
+        message: "Password resetted succesful"
     })
 }

@@ -9,6 +9,6 @@ export const KeyRouter = express.Router()
 
 KeyRouter.get('/new-key', verifyToken, generateKey)
 KeyRouter.get('/all-keys', verifyToken, allKeys)
-KeyRouter.get('/revoke-key', verifyToken, revokeKey)
+KeyRouter.patch('/revoke-key', verifyToken, revokeKey)
 KeyRouter.post('/active-key', verifyKey)
 KeyRouter.get('/key/:access_key', verifyToken, keyDetails)

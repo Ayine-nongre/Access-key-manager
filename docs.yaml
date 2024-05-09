@@ -1,0 +1,640 @@
+definition:
+  openapi: 3.0.0
+  info:
+    title: Access key manager
+    description: An access key manager api for Micro-Focus Inc.
+    version: 1.0.0
+  servers:
+    - url: http://localhost:3000/api
+      description: Testing server on localhost
+    - url: http://staging-api.example.com
+      description: Optional server description, e.g. Internal staging server for testing
+  paths:
+    /signup:
+      post:
+        summary: Creates a new user.
+        tags:
+          - Users
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                    email: 
+                      type: string
+                    password:
+                      type: string
+                    confirmPassword:
+                      tyoe: string
+        responses:
+          '201':    # status code
+            description: Created
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+                    email:
+                      type: string
+          '500':
+            description: Error
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties: 
+                      status: 
+                        type: string
+                      message:
+                        type: string
+    /activate-account:
+      get:
+        summary: Verify new users account
+        tags:
+          - Users
+        parameters:
+          - in: query
+            name: token
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '404': 
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500': 
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /login:
+      post:
+        summary: Logs a user into his/her account
+        tags:
+          - Users
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                    email: 
+                      type: string
+                    password:
+                      type: string
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+                    token:
+                      type: string
+          '404': 
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500': 
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /send-reset-otp:
+      post:
+        summary: Sends reset otp to users mail
+        tags:
+          - Users
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                    email: 
+                      type: string
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+                    email:
+                      type: string
+          '404': 
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500':
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /verify-otp:
+      post:
+        summary: Verify otp from user
+        tags:
+          - Users
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                    email: 
+                      type: string
+                    OTP: 
+                      type: string
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '401':
+            description: Unauthorised
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500':
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /reset-password:
+      post:
+        summary: Reset user's password
+        tags:
+          - Users
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                    email: 
+                      type: string
+                    password: 
+                      type: string
+                    confirmPassword: 
+                      type: string
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '400':
+            description: Bad request
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500':
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /new-key:
+      get:
+        summary: Generate a new key
+        tags:
+          - Keys
+        security:
+          - bearerAuth: []
+        responses:
+          '201':
+            description: Created
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+                    key:
+                      type: object
+                      properties:
+                        accessKey:
+                          type: string
+                        created_At:
+                          type: string
+                        expiry:
+                          type: string
+                        status:
+                          type: string
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500': 
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /all-keys:
+      get:
+        summary: Retrieve all keys
+        tags:
+          - Keys
+        security:
+          - bearerAuth: []
+        responses:
+          '200':
+            description: Created
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+                    key:
+                      type: array
+                      items:
+                        properties:
+                          accessKey:
+                            type: string
+                          created_At:
+                            type: string
+                          expiry:
+                            type: string
+                          status:
+                            type: string
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500': 
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /revoke-key:
+      patch:
+        summary: Revoke an access key
+        tags:
+          - Keys
+        parameters:
+          - in: query
+            name: access_key
+            required: true
+            schema:
+              type: true
+        security:
+          - bearerAuth: []
+        responses:
+          '200':
+            description: Created
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '401':
+            description: Unauthorised
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500': 
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /active-key:
+      post:
+        summary: Retrieve an active key using a given email
+        tags:
+          - Keys
+        security:
+          - bearerAuth: []
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                    email: 
+                      type: string
+        responses:
+          '200': 
+            description: Success
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+                    key:
+                      type: object
+                      properties:
+                        accessKey:
+                          type: string
+                        created_At:
+                          type: string
+                        expiry:
+                          type: string
+                        status:
+                          type: string
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500': 
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+    /key/{access_key}:
+      get:
+        summary: Get the details of a key
+        tags:
+          - Keys
+        parameters:
+          - in: path
+            name: access_key
+            required: true
+        security:
+          - bearerAuth: []
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+                    key:
+                      type: object
+                      properties:
+                        accessKey:
+                          type: string
+                        created_At:
+                          type: string
+                        expiry:
+                          type: string
+                        status:
+                          type: string
+          '404':
+            description: Not Found
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+          '500':
+            description: Error
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+  components:
+    securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT  
+    schemas:
+      users:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Auto generated id for user
+          email:
+            type: string
+          password:
+            type: string
+          role:
+            type: string
+          status:
+            type: string
+          activation_token:
+            type: string
+          reset_OTP:
+            type: string
+      keys:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Auto generated id for key
+          accessKey:
+            type: string
+          status:
+            type: string
+          created_At:
+            type: string
+          expiry:
+            type: string
+apis: [./routes/*.js]

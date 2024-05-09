@@ -1,4 +1,5 @@
 import { transporter } from "../../config/MailService.js";
+import { catchErr } from "../../middleware/ErrorHandler.js";
 import { createToken } from "../../middleware/tokenizer.js";
 import { User } from "../../model/User.js";
 import bcrypt from 'bcrypt';
@@ -8,32 +9,17 @@ export const signup = async (req, res, next) => {
     const { email, password, confirmPassword } = req.body;
     
     // this code checks to ensure all fields were filled
-    if (!email || !password || !confirmPassword) {
-        return res.status(500).json({
-            status: 'Failed',
-            message: 'Incomplete form data'
-        })
-    }
+    if (!email || !password || !confirmPassword) return catchErr(res, 'Incomplete form data', 500)
 
     // check to see if email is not already in use
     const user = await User.findOne({ email: email }).catch((err) => console.log(err))
-    if (user) {
-        return res.status(500).json({
-            status: 'Failed',
-            message: 'User with email already exists'
-        })
-    }
+    if (user) return catchErr(res, 'User with email already exists', 500) 
 
     // check if passwords match
-    if (password !== confirmPassword) {
-        return res.status(500).json({
-            status: 'Failed',
-            message: 'Passwords do not match'
-        })
-    }
+    if (password !== confirmPassword) return catchErr(res, 'Passwords do not match', 500)
 
     // encrypt password
-    const hashedPassword = await bcrypt.hash(password, 10).catch((err) => console.log(err))
+    const hashedPassword = await bcrypt.hash(password, 10).catch((err => catchErr(res, 500)))
     const token = crypto.randomBytes(16).toString('hex')
     const activation_url = `http://localhost:3000/api/activate-account?token=${token}`
 
@@ -44,11 +30,7 @@ export const signup = async (req, res, next) => {
         subject: "Account verification",
         html: `<div><p>Hi,</p><p>Click <a href=${activation_url}>here</a> to activate your account.</p></div>`
     }).catch((err) => {
-        console.log(err)
-        return next(res.status(500).json({
-            status: 'Failed',
-            message: 'Failed to send verification mail'
-        }))
+       return catchErr(res, 'Failed to send verification mail', 500)
     })
 
     // create new user
@@ -61,5 +43,5 @@ export const signup = async (req, res, next) => {
     // save new user in database
     await newUser.save()
     .then((user) => createToken(user, res, 201))
-    .catch((err) => console.log(err))
+    .catch((err => catchErr(res, 500)))
 }

@@ -5,7 +5,7 @@ import { User } from "../../model/User.js"
 export const revokeKey = async (req, res) => {
     // check to see if user exists
     const user = await User.findOne({ email: req.user.email }).catch((err => catchErr(res, 500)))
-    if (!user) return catchErr(res, 'This user doesn\'t exist', 400)
+    if (!user) return catchErr(res, 'This user doesn\'t exist', 404)
 
     // check to see if user has permission to access this route
     if (req.user.role !== 'admin') return catchErr(res, 'User does not have access to this page', 401)

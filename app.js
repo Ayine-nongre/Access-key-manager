@@ -1,8 +1,11 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import mongoose, { version } from 'mongoose';
 import cookieParser from 'cookie-parser';
 import { AccountRouter } from './routes/AccountRoutes.js';
 import { KeyRouter } from './routes/KeyRoutes.js';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerui from 'swagger-ui-express'
+import YAML from 'yamljs';
 
 const app = express()
 
@@ -16,9 +19,14 @@ set.once('open', function() {
     console.log('Db connected successfully')
 });
 
+const swaggerDocs = YAML.load('./docs.yaml')
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+
+const spacs = swaggerJSDoc(swaggerDocs)
+app.use('/api-docs', swaggerui.serve, swaggerui.setup(spacs))
 
 app.use('/api', AccountRouter)
 app.use('/api', KeyRouter)

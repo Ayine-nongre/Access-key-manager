@@ -9,7 +9,7 @@ export const verifyKey = async (req, res) => {
 
     // check to see if user exists
     const user = await User.findOne({ email: email }).catch((err => catchErr(res, 500)))
-    if (!user) return catchErr(res, 'This user doesn\'t exist', 400)
+    if (!user) return catchErr(res, 'This user doesn\'t exist', 404)
 
     // check to see if an active access key already exists
     const activeKeys = await user.populate({ path: 'key', match: { status: 'active' }, select: 'keys'}).catch((err => catchErr(res, 'Internal server error', 500)))
