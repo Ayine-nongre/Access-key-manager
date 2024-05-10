@@ -1,6 +1,9 @@
 # Access Key Manager
 This repo contains an access key manager for a multitenant school management software, this project was built with NodeJS, express, mongodb and minimalistic ejs.
 
+## Documentation
+Click on [docs](https://micro-accessmanager.onrender.com/api-docs/) for api documentation using swagger ui
+
 ## Features Implemented
 ⚪ <strong>Admin:</strong>
 1. Login with email and password.
