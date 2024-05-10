@@ -52,6 +52,48 @@ definition:
                         type: string
                       message:
                         type: string
+    /admin/signup:
+      post:
+        summary: Creates a new admin user.
+        tags:
+          - Users
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                    email: 
+                      type: string
+                    password:
+                      type: string
+                    confirmPassword:
+                      tyoe: string
+        responses:
+          '201':    # status code
+            description: Created
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message:
+                      type: string
+                    email:
+                      type: string
+          '500':
+            description: Error
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties: 
+                      status: 
+                        type: string
+                      message:
+                        type: string
     /activate-account:
       get:
         summary: Verify new users account
@@ -434,7 +476,7 @@ definition:
             name: access_key
             required: true
             schema:
-              type: true
+              type: string
         security:
           - bearerAuth: []
         responses:
@@ -449,6 +491,17 @@ definition:
                       type: string
                     message:
                       type: string
+                    key:
+                      type: object
+                      properties:
+                        accessKey:
+                          type: string
+                        created_At:
+                          type: string
+                        expiry:
+                          type: string
+                        status:
+                          type: string
           '401':
             description: Unauthorised
             content:

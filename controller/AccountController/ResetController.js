@@ -39,7 +39,8 @@ export const sendOTP = async (req, res, next) => {
     const hashedOTP = await bcrypt.hash(OTP, 10).catch(err => catchErr(res, 500))
     if (!hashedOTP) return catchErr(res, 500)
 
-    user.updateOne({ reset_OTP: hashedOTP }).catch(err => catchErr(res, 500))
+    user.reset_OTP = hashedOTP
+    await user.save().catch(err => catchErr(res, 500))
 
     res.status(200).json({
         status: "success",
@@ -56,20 +57,13 @@ export const verifyOTP = async (req, res, next) => {
     const user = await User.findOne({ email: email }).catch(err => catchErr(res, 500))
     if (!user) return catchErr(res, 'This email is not registered to Micro-Focus inc', 404)
 
-    // var date = new Date(userOTP.createdAt);
-    // var expiry = date.getTime() + 300000 //5 minutes in milliseconds is 300000
-    
-    // if (Date.now() >= expiry){
-    //     await userOTP.destroy().catch(err => console.log(err))
-    //     return res.status(401).json({ message: "The OTP has expired" })
-    // }
-
     // Verify if OTP is valid
     const isAuthorised = await bcrypt.compare(OTP, user.reset_OTP)
     if (!isAuthorised) return catchErr(res, 'Incorrect OTP', 401)
 
     // remove otp after verifying it
-    await user.updateOne({ reset_OTP: 'null' }).catch((err) => next(res, "Failed to remove used OTP", 500))
+    user.reset_OTP = 'null'
+    await user.save().catch((err) => next(res, "Failed to remove used OTP", 500))
 
     return res.status(200).json({
         status: "Success",
@@ -96,7 +90,7 @@ export const resetPassword = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10).catch(err => catchErr(res, 500))
     if (!hashedPassword) return catchErr(res, 500)
 
-    await user.updateOne({ password: hashedPassword }).catch(err => catchErr(res, 500))
+    user.password = hashedPassword
     await user.save().catch(err => catchErr(res, 500))
 
     res.status(200).json({

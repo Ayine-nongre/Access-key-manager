@@ -15,7 +15,7 @@ export const login = async (req, res) => {
     if (!user) return catchErr(res, 'Incorrect email or password', 404)
 
     // check to see if user's account is verified
-    if (user.status !== active) return catchErr(res, 'User\s account has not been verified', 500)
+    if (user.status !== 'active') return catchErr(res, 'User\s account has not been verified', 500)
 
     // check to see password is correct
     const isAuthorized = await bcrypt.compare(password, user.password).catch((err) => catchErr(res, 500))

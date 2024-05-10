@@ -17,10 +17,12 @@ export const revokeKey = async (req, res) => {
     const accessKey = await Key.findOne({ accessKey: req.query.access_key }).catch((err => catchErr(res, 500)))
     if (!accessKey) return catchErr(res, 'Access key doesn\'t exist', 404)
 
-    await accessKey.updateOne({ status: 'revoked'}).catch((err => catchErr(res, 500)))
+    accessKey.status = 'revoked'
+    await accessKey.save().catch((err => catchErr(res, 500)))
 
     return res.status(200).json({
         status: "Success",
-        message: "Access key revoked successfully"
+        message: "Access key revoked successfully",
+        key: accessKey
     })
 }
