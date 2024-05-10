@@ -9,7 +9,6 @@ import swaggerui from 'swagger-ui-express'
 import YAML from 'yamljs';
 import { CronJob } from 'cron'
 import { Key } from './model/Keys.js';
-import { catchErr } from './middleware/ErrorHandler.js';
 
 const app = express()
 dotenv.config()
@@ -50,6 +49,6 @@ const job = new CronJob(
 app.use('/api', AccountRouter)
 app.use('/api', KeyRouter)
 
-app.listen(3000, () => {
-    console.log("Server is running on port 3000")
+app.listen(3000 || process.env.PORT, () => {
+    console.log("Server is running...")
 })
