@@ -21,7 +21,7 @@ export const signup = async (req, res, next) => {
     // encrypt password
     const hashedPassword = await bcrypt.hash(password, 10).catch((err => catchErr(res, 500)))
     const token = crypto.randomBytes(16).toString('hex')
-    const activation_url = `https://micro-accessmangager.onrender.com/api/activate-account?token=${token}`
+    const activation_url = process.env.URL + `/activate-account?token=${token}`
 
     // send email to user for account verification
     await transporter.sendMail({
