@@ -7,7 +7,7 @@ definition:
   servers:
     - url: http://localhost:3000/api
       description: Testing server on localhost
-    - url: https://micro-accessmangager.onrender.com/api
+    - url: https://micro-accessmanager.onrender.com/api
       description: Live server hosted on render
   paths:
     /signup:
