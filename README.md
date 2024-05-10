@@ -3,6 +3,8 @@ This repo contains an access key manager for a multitenant school management sof
 ## Documentation
 Click on [docs](https://micro-accessmanager.onrender.com/api-docs/) for api documentation using swagger ui
 
+Live url - https://micro-accessmanager.onrender.com/api-docs/
+
 ## Features Implemented
 ⚪ <strong>Admin:</strong>
 1. Login with email and password.
