@@ -15,18 +15,21 @@ export const generateKey = async (req, res) => {
     const activeKeys = await user.populate({ path: 'key', match: { status: 'active' }, select: 'keys'}).catch((err => catchErr(res, 500)))
     if ((activeKeys.key).length > 0) return catchErr(res, 'Active key already exists', 400)
 
+    const date = new Date()
+    const expiry = date.setDate(date.getDate() + 90)
+
     // create a new access key
     const newKey = await Key.create({
         accessKey: accessKey,
         created_At: new Date(),
-        expiry: new Date()
+        expiry: expiry
     }).catch((err => catchErr(res, 500)))
 
     // save access key
     await user.key.push(newKey)
     await user.save().catch((err => catchErr(res, 500)))
 
-    res.status(201).json({
+    return res.status(201).json({
         status: "Success",
         message: "New access key created successfully",
         key: accessKey
