@@ -46,6 +46,14 @@ const job = new CronJob(
     'utc'
 )
 
+app.get('/', (req, res) => {
+    res.redirect('/api-docs')
+})
+
+app.get('/api', (req, res) => {
+    res.redirect('/api-docs')
+})
+
 app.use('/api', AccountRouter)
 app.use('/api', KeyRouter)
 
